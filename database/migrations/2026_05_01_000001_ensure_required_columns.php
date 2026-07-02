@@ -8,23 +8,27 @@ return new class extends Migration
 {
     public function up(): void
     {
-        // Pastikan tabel penjualans punya kolom yang diperlukan
-        Schema::table('penjualans', function (Blueprint $table) {
-            if (!Schema::hasColumn('penjualans', 'no_penjualan')) {
-                $table->string('no_penjualan')->unique()->nullable()->after('id_jual');
-            }
-        });
+        if (!Schema::hasTable('penjualans')) {
+            return;
+        }
 
-        // Pastikan tabel produks punya kolom id_produk sebagai auto-increment
-        // (Jika sebelumnya menggunakan string, kita perlu handle ini)
+        if (!Schema::hasColumn('penjualans', 'no_penjualan')) {
+            Schema::table('penjualans', function (Blueprint $table) {
+                $table->string('no_penjualan')->nullable()->unique();
+            });
+        }
     }
 
     public function down(): void
     {
-        Schema::table('penjualans', function (Blueprint $table) {
-            if (Schema::hasColumn('penjualans', 'no_penjualan')) {
+        if (!Schema::hasTable('penjualans')) {
+            return;
+        }
+
+        if (Schema::hasColumn('penjualans', 'no_penjualan')) {
+            Schema::table('penjualans', function (Blueprint $table) {
                 $table->dropColumn('no_penjualan');
-            }
-        });
+            });
+        }
     }
 };
